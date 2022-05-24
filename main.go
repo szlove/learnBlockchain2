@@ -172,14 +172,17 @@ func (tx *Transaction) Print() {
 }
 
 func main() {
-	bc := NewBlockchain("my_blockchain_address")
+	bc := NewBlockchain("Slam")
 
-	bc.AddTransaction("Blockchain", "Slam", 1000.0)
-	bc.AddTransaction("Blockchain", "Subin", 1000.0)
+	bc.AddTransaction(MINING_SENDER, "Slam", 100.0)
+	bc.AddTransaction(MINING_SENDER, "Subin", 100.0)
+	bc.AddTransaction(MINING_SENDER, "Bee", 100.0)
 	bc.Mining()
 
 	bc.AddTransaction("Slam", "Subin", 1.0)
 	bc.AddTransaction("Subin", "Slam", 0.5)
+	bc.AddTransaction("Slam", "Bee", 0.5)
+	bc.AddTransaction("Slam", "Subin", 2.0)
 	bc.Mining()
 
 	bc.Print()
