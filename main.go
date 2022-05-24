@@ -10,7 +10,9 @@ import (
 )
 
 const (
-	MINING_DIFFICULTY = 3
+	MINING_DIFFICULTY = 4
+	MINING_SENDER     = "THE BLOCKCHAIN"
+	MINING_REWARD     = 1.0
 )
 
 func init() {
@@ -62,12 +64,13 @@ func (b *Block) Print() {
 }
 
 type Blockchain struct {
-	chain           []*Block
-	transactionPool []*Transaction
+	chain             []*Block
+	transactionPool   []*Transaction
+	blockchainAddress string
 }
 
-func NewBlockchain() *Blockchain {
-	bc := &Blockchain{}
+func NewBlockchain(blockchainAddress string) *Blockchain {
+	bc := &Blockchain{blockchainAddress: blockchainAddress}
 	b := &Block{}
 	bc.CreateBlock(b.Hash(), 0)
 	return bc
@@ -130,6 +133,15 @@ func (bc *Blockchain) ProofOfWork() int {
 	return nonce
 }
 
+func (bc *Blockchain) Mining() bool {
+	bc.AddTransaction(MINING_SENDER, bc.blockchainAddress, MINING_REWARD)
+	prevHash := bc.LastBlock().Hash()
+	nonce := bc.ProofOfWork()
+	bc.CreateBlock(prevHash, nonce)
+	log.Println("action=mining status=success")
+	return true
+}
+
 type Transaction struct {
 	senderBlockchainAddress    string
 	recipientBlockchainAddress string
@@ -160,16 +172,15 @@ func (tx *Transaction) Print() {
 }
 
 func main() {
-	bc := NewBlockchain()
+	bc := NewBlockchain("my_blockchain_address")
+
 	bc.AddTransaction("Blockchain", "Slam", 1000.0)
 	bc.AddTransaction("Blockchain", "Subin", 1000.0)
-	lb := bc.LastBlock()
-	nonce := bc.ProofOfWork()
-	bc.CreateBlock(lb.Hash(), nonce)
+	bc.Mining()
+
 	bc.AddTransaction("Slam", "Subin", 1.0)
 	bc.AddTransaction("Subin", "Slam", 0.5)
-	lb = bc.LastBlock()
-	nonce = bc.ProofOfWork()
-	bc.CreateBlock(lb.Hash(), nonce)
+	bc.Mining()
+
 	bc.Print()
 }
