@@ -6,10 +6,6 @@ import (
 	"strings"
 )
 
-func init() {
-	log.SetPrefix("Blockchain")
-}
-
 const (
 	MINING_SENDER     = "THE BLOCKCHAIN"
 	MINING_REWARD     = 1.0
@@ -97,7 +93,7 @@ func (bc *Blockchain) CalculateTotalAmount(blockchainAddress string) float32 {
 func (bc *Blockchain) Print() {
 	for i, b := range bc.chain {
 		r := strings.Repeat("=", 25)
-		fmt.Printf("%s Block %d %s", r, i, r)
+		fmt.Printf("%s Block %d %s\n", r, i, r)
 		b.Print()
 	}
 	fmt.Println(strings.Repeat("*", 50))
