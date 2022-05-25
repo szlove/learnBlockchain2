@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/szlove/learnBlockchain2/blockchain"
 )
 
@@ -24,4 +26,10 @@ func main() {
 	bc.Mining()
 
 	bc.Print()
+
+	fmt.Printf("Slam: %f\n", bc.CalculateTotalAmount("Slam"))
+	fmt.Printf("Subin: %f\n", bc.CalculateTotalAmount("Subin"))
+	fmt.Printf("Bee: %f\n", bc.CalculateTotalAmount("Bee"))
+	fmt.Printf("Suzi: %f\n", bc.CalculateTotalAmount("Suzi"))
+	fmt.Printf("my_blockchain_address: %f\n", bc.CalculateTotalAmount("my_blockchain_address"))
 }
