@@ -4,5 +4,5 @@ go 1.17
 
 require (
 	github.com/btcsuite/btcutil v1.0.2 // indirect
-	golang.org/x/crypto v0.0.0-20220518034528-6f7dac969898 // indirect
+	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e // indirect
 )
