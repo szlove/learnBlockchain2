@@ -2,20 +2,33 @@ package main
 
 import (
 	"fmt"
+	"log"
 
+	"github.com/szlove/learnBlockchain2/blockchain"
 	"github.com/szlove/learnBlockchain2/wallet"
 )
 
-func main() {
-	w := wallet.NewWallet()
-	fmt.Println(w.PrivateKey())
-	fmt.Println(w.PrivateKeyString())
-	fmt.Println()
-	fmt.Println(w.PublicKey())
-	fmt.Println(w.PublicKeyString())
-	fmt.Println()
-	fmt.Println(w.BlockchainAddress())
+func init() {
+	log.SetPrefix("Blockchain: ")
+}
 
-	t := wallet.NewTransaction(w.PrivateKey(), w.PublicKey(), w.BlockchainAddress(), "Bee", 1.0)
-	fmt.Printf("Signature    %s\n", t.GenerateSignature())
+func main() {
+	walletM := wallet.NewWallet()
+	walletA := wallet.NewWallet()
+	walletB := wallet.NewWallet()
+
+	t := wallet.NewTransaction(walletA.PrivateKey(), walletA.PublicKey(), walletA.BlockchainAddress(),
+		walletB.BlockchainAddress(), 1.0)
+
+	bc := blockchain.NewBlockchain(walletM.BlockchainAddress())
+	isAdded := bc.AddTransaction(walletA.BlockchainAddress(), walletB.BlockchainAddress(), 1.0,
+		walletA.PublicKey(), t.GenerateSignature())
+	fmt.Println("added? ", isAdded)
+
+	bc.Mining()
+	bc.Print()
+
+	fmt.Printf("walletM    %f\n", bc.CalculateTotalAmount(walletM.BlockchainAddress()))
+	fmt.Printf("walletA    %f\n", bc.CalculateTotalAmount(walletA.BlockchainAddress()))
+	fmt.Printf("walletB    %f\n", bc.CalculateTotalAmount(walletB.BlockchainAddress()))
 }

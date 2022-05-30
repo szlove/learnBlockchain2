@@ -1,13 +1,19 @@
 package blockchain
 
 import (
+	"crypto/ecdsa"
+	"crypto/sha256"
+	"encoding/json"
 	"fmt"
+	"log"
 	"strings"
+
+	"github.com/szlove/learnBlockchain2/util"
 )
 
 const (
 	MINING_SENDER     string  = "THE BLOCKCHAIN"
-	MINING_REWARD     float32 = 100.0
+	MINING_REWARD     float32 = 1.0
 	MINING_DIFFICALTY int     = 3
 )
 
@@ -32,9 +38,33 @@ func (bc *Blockchain) CreateBlock(previousHash [32]byte, nonce int) *Block {
 	return b
 }
 
-func (bc *Blockchain) AddTransaction(sender, recipient string, value float32) {
+func (bc *Blockchain) AddTransaction(sender, recipient string, value float32,
+	senderPublicKey *ecdsa.PublicKey, s *util.Signature) (ok bool) {
 	t := NewTransaction(sender, recipient, value)
-	bc.transactionPool = append(bc.transactionPool, t)
+	if sender == MINING_SENDER {
+		bc.transactionPool = append(bc.transactionPool, t)
+		return true
+	}
+	if bc.VerifyTransactionSignature(senderPublicKey, s, t) {
+		if bc.CalculateTotalAmount(sender) < value {
+			log.Println("ERROR: Not enough valance in a wallet")
+			return false
+		}
+		bc.transactionPool = append(bc.transactionPool, t)
+		return true
+	}
+	log.Println("ERROR: Verify transaction")
+	return false
+}
+
+func (bc *Blockchain) VerifyTransactionSignature(
+	senderPublicKey *ecdsa.PublicKey, s *util.Signature, t *Transaction) bool {
+	m, err := json.Marshal(t)
+	if err != nil {
+		panic(err)
+	}
+	h := sha256.Sum256(m)
+	return ecdsa.Verify(senderPublicKey, h[:], s.R, s.S)
 }
 
 func (bc *Blockchain) CopyTransactionPool() []*Transaction {
@@ -64,7 +94,7 @@ func (bc *Blockchain) ProofOfWork(previousHash [32]byte) int {
 }
 
 func (bc *Blockchain) Mining() bool {
-	bc.AddTransaction(MINING_SENDER, bc.address, MINING_REWARD)
+	bc.AddTransaction(MINING_SENDER, bc.address, MINING_REWARD, nil, nil)
 	lastBlock := bc.LastBlock()
 	nonce := bc.ProofOfWork(lastBlock.Hash())
 	bc.CreateBlock(lastBlock.Hash(), nonce)
