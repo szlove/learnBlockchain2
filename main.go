@@ -3,29 +3,14 @@ package main
 import (
 	"fmt"
 
-	"github.com/szlove/learnBlockchain2/blockchain"
+	"github.com/szlove/learnBlockchain2/wallet"
 )
 
 func main() {
-	address := "Slam"
-	bc := blockchain.NewBlockchain(address)
-
-	bc.AddTransaction("Slam", "Bee", 3.0)
-	bc.Mining()
-
-	bc.AddTransaction("Bee", "Slam", 4.5)
-	bc.AddTransaction("Dog", "Slam", 400.0)
-	bc.AddTransaction("Cat", "Slam", 800.0)
-	bc.Mining()
-
-	bc.AddTransaction("Slam", "Cat", 300.0)
-	bc.AddTransaction("Dog", "Bee", 200.0)
-	bc.Mining()
-
-	bc.Print()
-
-	fmt.Printf("Slam    %f\n", bc.CalculateTotalAmount("Slam"))
-	fmt.Printf("Bee     %f\n", bc.CalculateTotalAmount("Bee"))
-	fmt.Printf("Dog     %f\n", bc.CalculateTotalAmount("Dog"))
-	fmt.Printf("Cat     %f\n", bc.CalculateTotalAmount("Cat"))
+	w := wallet.NewWallet()
+	fmt.Println(w.PrivateKey())
+	fmt.Println(w.PrivateKeyString())
+	fmt.Println()
+	fmt.Println(w.PublicKey())
+	fmt.Println(w.PublicKeyString())
 }

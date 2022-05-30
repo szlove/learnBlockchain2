@@ -7,7 +7,7 @@ import (
 
 const (
 	MINING_SENDER     string  = "THE BLOCKCHAIN"
-	MINING_REWARD     float32 = 1.0
+	MINING_REWARD     float32 = 100.0
 	MINING_DIFFICALTY int     = 3
 )
 
