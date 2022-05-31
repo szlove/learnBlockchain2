@@ -35,7 +35,10 @@ func (t *Transaction) MarshalJSON() ([]byte, error) {
 }
 
 func (t *Transaction) GenerateSignature() *util.Signature {
-	m, _ := json.Marshal(t)
+	m, err := json.Marshal(t)
+	if err != nil {
+		panic(err)
+	}
 	h := sha256.Sum256(m)
 	r, s, err := ecdsa.Sign(rand.Reader, t.senderPrivateKey, h[:])
 	if err != nil {

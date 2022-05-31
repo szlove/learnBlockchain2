@@ -5,7 +5,6 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/sha256"
-	"fmt"
 
 	"github.com/btcsuite/btcutil/base58"
 	"golang.org/x/crypto/ripemd160"
@@ -47,22 +46,17 @@ func NewWallet() *Wallet {
 	h6 := sha256.New()
 	h6.Write(digest5)
 	digest6 := h6.Sum(nil)
-	// 7. checksum
-	checksum := digest6[:4]
+	// 7.
+	checkSum := digest6[:4]
 	// 8.
 	dc8 := make([]byte, 25)
 	copy(dc8[:21], vd4[:])
-	copy(dc8[21:], checksum[:])
+	copy(dc8[21:], checkSum)
 	// 9.
-	address := base58.Encode(dc8)
-	w.blockchainAddress = address
+	w.blockchainAddress = base58.Encode(dc8)
 	return w
 }
 
 func (w *Wallet) PrivateKey() *ecdsa.PrivateKey { return w.privateKey }
-func (w *Wallet) PrivateKeyString() string      { return fmt.Sprintf("%x", w.privateKey.D.Bytes()) }
 func (w *Wallet) PublicKey() *ecdsa.PublicKey   { return w.publicKey }
-func (w *Wallet) PublicKeyString() string {
-	return fmt.Sprintf("%x%x", w.publicKey.X.Bytes(), w.publicKey.Y.Bytes())
-}
-func (w *Wallet) BlockchainAddress() string { return w.blockchainAddress }
+func (w *Wallet) BlockchainAddress() string     { return w.blockchainAddress }
